@@ -1,0 +1,14 @@
+#
+# BNF grammar for ESQL language
+# for BeepBeep2, a complex event
+# processing program (06-2014)
+#
+
+<processors>		:= <input_file>;
+
+#0 input 1 output
+<input_file>	:= INPUT FILE <trace> .;
+
+<trace>			:= <string>;
+
+<string>		:= ^"[^"]*";

@@ -1,0 +1,23 @@
+﻿#
+# BNF grammar for ESQL language
+# for BeepBeep2, a complex event
+# processing program (06-2014)
+#
+
+<processor_group>	:= Ɛ | <processor> ∘ <processor_group> | <processor>;
+
+<processor>			:= Ɛ | <1-0_processors> | <trace>;
+
+<1-0_processors>	:= <print>;
+
+
+# 1 input 0 output
+<print>				:= PRINT ∘ <processor_group>;
+
+
+<trace>				:= <string>;
+
+<string>			:= ^"[^"]*"; # match any character zero or more times inside quotation marks, except '"'
+<number>			:= ^[\d]+;
+
+#<Ɛ>					:= ^$;

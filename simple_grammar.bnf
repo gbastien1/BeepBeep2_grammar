@@ -1,0 +1,33 @@
+#
+# BNF grammar for ESQL language
+# for BeepBeep2, a complex event
+# processing program (06-2014)
+#
+
+<processor_group>		:= ^$ | <processor> ∘ <processor_group> . | <processor>;
+
+<processor>				:= <1-0_processor> | <trace>;
+
+<1-0_processor>			:= <print>;
+
+<print>					:= PRINT <print_opt> <processor_group> |
+						   PRINT <processor_group>;
+
+<print_opt>				:= AT <number> PER SECOND ALL OF | 
+						   AT <number> PER SECOND <number> OF | 
+						   AT <number> PER SECOND | 
+						   <number> OF |
+						   ON KEY <key> ALL OF |
+						   ON KEY <key> <number> OF |
+						   ON KEY <key> ;
+
+<trace>					:= <string>;
+<string>				:= ^"[^"]*";
+
+<number>				:= ^[\d]*;
+
+<key>					:= ^"[.]+" | ^"f[\d]" | 
+						   "ENTER" | "CTRL" | "ALT" | "SHIFT" | 
+						   "TAB" | "ESC" | "CAPS" | "BACK_S" | "DEL" |
+						   "HOME" | "END" | "PAGE_UP" | "PAGE_DOWN" | "NUM_LOCK" |
+						   "DOWN_ARROW" | "UP_ARROW" | "LEFT_ARROW" | "RIGHT_ARROW";

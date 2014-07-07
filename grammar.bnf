@@ -1,0 +1,61 @@
+#
+# BNF grammar for ESQL language
+# for BeepBeep2, a complex event
+# processing program (06-2014)
+#
+
+<expression>			:= <N-0_processor> <processor_group> <0-N_processor> | <processor_group>;
+
+<processor_group>		:= ^$ | <processor> | <processor> ∘ <processor_group>;
+
+<processor>				:= <N-0_processor> | <0-N_processor> | <trace>;
+
+<N-0_processor>			:= <1-0_processor>;
+<0-N_processor>			:= <0-1_processor>;
+
+<1-0_processor>			:= <print> | <stdout> | <stderr> | <input_file>;
+
+<0-1_processor>			:= <yaml> | <out_to_file>;
+
+<file_processor>		:= <input_file> | <out_to_file>;
+
+# 1 input 0 output processors
+<print>					:= PRINT <print_opt> <processor_group> |
+						   PRINT <processor_group>;
+
+<stdout>				:= STDOUT <print_opt> <processor_group> |
+						   STDOUT <processor_group>;
+
+<stderr>				:= STDERR <print_opt> <processor_group> |
+						   STDERR <processor_group>;
+
+<print_opt>				:= AT <number> PER SECOND ALL OF | 
+						   AT <number> PER SECOND <number> OF | 
+						   AT <number> PER SECOND | 
+						   <number> OF |
+						   ON KEY <key> ALL OF |
+						   ON KEY <key> <number> OF |
+						   ON KEY <key> ;
+
+# 0 input 1 output processors
+<input_file>			:= INPUT FILE <filename> | INPUT FILE <processor_group>;
+
+<out_to_file>			:= OUTPUT TO FILE <filename> <out_opt> <processor_group> |
+						   OUTPUT TO FILE <filename> <processor_group>;
+
+<out_opt>				:= <number> OF | ALL OF;
+
+<yaml>					:= YAML <file_processor>;
+
+<trace>					:= <string>;
+
+<filename>				:= <string>;
+<string>				:= ^"[^"]*";
+
+<number>				:= ^[\d]*;
+
+<key>					:= ^"[.]+" | ^"f[\d]" | 
+						   "ENTER" | "CTRL" | "ALT" | "SHIFT" | 
+						   "TAB" | "ESC" | "CAPS" | "BACK_S" | "DEL" |
+						   "HOME" | "END" | "PAGE_UP" | "PAGE_DOWN" | "NUM_LOCK" |
+						   "DOWN_ARROW" | "UP_ARROW" | "LEFT_ARROW" | "RIGHT_ARROW";

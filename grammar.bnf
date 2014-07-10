@@ -4,30 +4,39 @@
 # processing program (06-2014)
 #
 
-<expression>			:= <N-0_processor> <processor_group> <0-N_processor> | <processor_group>;
-
-<processor_group>		:= ^$ | <processor> | <processor> ∘ <processor_group>;
-
-<processor>				:= <N-0_processor> | <0-N_processor> | <trace>;
+<exp_start>				:= <N-0_processor> .;
 
 <N-0_processor>			:= <1-0_processor>;
-<0-N_processor>			:= <0-1_processor>;
 
-<1-0_processor>			:= <print> | <stdout> | <stderr> | <input_file>;
-
-<0-1_processor>			:= <yaml> | <out_to_file>;
+<1-0_processor>			:= <print> | <stdout> | <stderr> | <out_to_file>;
+<0-1_processor>			:= <yaml> | <input_file>;
+<1-1_processor>			:= <constant>;
+<2-1_processor>			:= <multiply>;
 
 <file_processor>		:= <input_file> | <out_to_file>;
 
+
 # 1 input 0 output processors
-<print>					:= PRINT <print_opt> <processor_group> |
-						   PRINT <processor_group>;
+<print>					:= PRINT <print_opt> <0-1_processor> |
+						   PRINT <print_opt> <1-1_processor> |
+						   PRINT <print_opt> <2-1_processor> |
+						   PRINT <0-1_processor> |
+						   PRINT <1-1_processor> |
+						   PRINT <2-1_processor>;
 
-<stdout>				:= STDOUT <print_opt> <processor_group> |
-						   STDOUT <processor_group>;
+<stdout>				:= STDOUT <print_opt> <0-1_processor> |
+						   STDOUT <print_opt> <1-1_processor> |
+						   STDOUT <print_opt> <2-1_processor> |
+						   STDOUT <0-1_processor> |
+						   STDOUT <1-1_processor> |
+						   STDOUT <2-1_processor>;
 
-<stderr>				:= STDERR <print_opt> <processor_group> |
-						   STDERR <processor_group>;
+<stderr>				:= STDERR <print_opt> <0-1_processor> |
+						   STDERR <print_opt> <1-1_processor> |
+						   STDERR <print_opt> <2-1_processor> |
+						   STDERR <0-1_processor> |
+						   STDERR <1-1_processor> |
+						   STDERR <2-1_processor>;
 
 <print_opt>				:= AT <number> PER SECOND ALL OF | 
 						   AT <number> PER SECOND <number> OF | 
@@ -37,18 +46,38 @@
 						   ON KEY <key> <number> OF |
 						   ON KEY <key> ;
 
-# 0 input 1 output processors
-<input_file>			:= INPUT FILE <filename> | INPUT FILE <processor_group>;
-
-<out_to_file>			:= OUTPUT TO FILE <filename> <out_opt> <processor_group> |
-						   OUTPUT TO FILE <filename> <processor_group>;
+<out_to_file>			:= OUTPUT TO FILE <filename> <out_opt> <0-1_processor> |
+						   OUTPUT TO FILE <filename> <out_opt> <1-1_processor> |
+						   OUTPUT TO FILE <filename> <out_opt> <2-1_processor> |
+						   OUTPUT TO FILE <filename> <out_opt> <trace> |
+						   OUTPUT TO FILE <filename> <0-1_processor> |
+						   OUTPUT TO FILE <filename> <1-1_processor> |
+						   OUTPUT TO FILE <filename> <2-1_processor> |
+						   OUTPUT TO FILE <filename> <trace>;
 
 <out_opt>				:= <number> OF | ALL OF;
 
+
+# 0 input 1 output processors
+<input_file>			:= INPUT FILE <filename> |
+						   INPUT FILE <filename> <1-0_processor> |
+						   INPUT FILE <filename> <1-1_processor>;
+						   
 <yaml>					:= YAML <file_processor>;
 
+
+# COPY and MULTIPLY are arbitrary, for the sake of the tests
+# 1 input 1 output processor
+<constant>				:= COPY <trace>; 
+
+# 2 input 1 output processor
+<multiply>				:= MULTIPLY <trace> BY <trace>;
+
+# 0 input 0 output "processor"
 <trace>					:= <string>;
 
+
+#constant terminals
 <filename>				:= <string>;
 <string>				:= ^"[^"]*";
 

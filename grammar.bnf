@@ -13,30 +13,24 @@
 <1-1_processor>			:= <constant>;
 <2-1_processor>			:= <multiply>;
 
-<file_processor>		:= <input_file> | <out_to_file>;
-
+<pipe_with_1-0>			:= <0-1_processor> | <1-1_processor> | <2-1_processor>;
+<pipe_with_0-1>			:= <1-0_processor> | <1-1_processor>;
 
 # 1 input 0 output processors
-<print>					:= PRINT <print_opt> <0-1_processor> |
-						   PRINT <print_opt> <1-1_processor> |
-						   PRINT <print_opt> <2-1_processor> |
-						   PRINT <0-1_processor> |
-						   PRINT <1-1_processor> |
-						   PRINT <2-1_processor>;
+<print>					:= PRINT <print_opt> <pipe_with_1-0> |
+						   PRINT <print_opt> <trace> |
+						   PRINT <pipe_with_1-0> |
+						   PRINT <trace>;
 
-<stdout>				:= STDOUT <print_opt> <0-1_processor> |
-						   STDOUT <print_opt> <1-1_processor> |
-						   STDOUT <print_opt> <2-1_processor> |
-						   STDOUT <0-1_processor> |
-						   STDOUT <1-1_processor> |
-						   STDOUT <2-1_processor>;
+<stdout>				:= STDOUT <print_opt> <pipe_with_1-0> |
+						   STDOUT <print_opt> <trace> |
+						   STDOUT <pipe_with_1-0> |
+						   STDOUT <trace>;
 
-<stderr>				:= STDERR <print_opt> <0-1_processor> |
-						   STDERR <print_opt> <1-1_processor> |
-						   STDERR <print_opt> <2-1_processor> |
-						   STDERR <0-1_processor> |
-						   STDERR <1-1_processor> |
-						   STDERR <2-1_processor>;
+<stderr>				:= STDERR <print_opt> <pipe_with_1-0> |
+						   STDERR <print_opt> <trace> |
+						   STDERR <pipe_with_1-0> |
+						   STDERR <trace>;
 
 <print_opt>				:= AT <number> PER SECOND ALL OF | 
 						   AT <number> PER SECOND <number> OF | 
@@ -46,24 +40,19 @@
 						   ON KEY <key> <number> OF |
 						   ON KEY <key> ;
 
-<out_to_file>			:= OUTPUT TO FILE <filename> <out_opt> <0-1_processor> |
-						   OUTPUT TO FILE <filename> <out_opt> <1-1_processor> |
-						   OUTPUT TO FILE <filename> <out_opt> <2-1_processor> |
+<out_to_file>			:= OUTPUT TO FILE <filename> <out_opt> <pipe_with_1-0> |
 						   OUTPUT TO FILE <filename> <out_opt> <trace> |
-						   OUTPUT TO FILE <filename> <0-1_processor> |
-						   OUTPUT TO FILE <filename> <1-1_processor> |
-						   OUTPUT TO FILE <filename> <2-1_processor> |
+						   OUTPUT TO FILE <filename> <pipe_with_1-0> |
 						   OUTPUT TO FILE <filename> <trace>;
 
 <out_opt>				:= <number> OF | ALL OF;
 
 
 # 0 input 1 output processors
+<yaml>					:= YAML <input_file>;
+
 <input_file>			:= INPUT FILE <filename> |
-						   INPUT FILE <filename> <1-0_processor> |
-						   INPUT FILE <filename> <1-1_processor>;
-						   
-<yaml>					:= YAML <file_processor>;
+						   INPUT FILE <filename> <pipe_with_0-1>;
 
 
 # COPY and MULTIPLY are arbitrary, for the sake of the tests
@@ -83,7 +72,7 @@
 
 <number>				:= ^[\d]*;
 
-<key>					:= ^"[.]+" | ^"f[\d]" | 
+<key>					:= ^"[.]" | ^"[fF][\d]" | 
 						   "ENTER" | "CTRL" | "ALT" | "SHIFT" | 
 						   "TAB" | "ESC" | "CAPS" | "BACK_S" | "DEL" |
 						   "HOME" | "END" | "PAGE_UP" | "PAGE_DOWN" | "NUM_LOCK" |

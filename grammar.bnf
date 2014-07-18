@@ -55,7 +55,7 @@
 				   INPUT FILE <filename> <pipe_with_0-1>;
 
 
-# COPY and MULTIPLY are arbitrary, for the sake of the tests
+# COPY and MULTIPLY are only for the sake of the tests
 # 1 input 1 output processor
 <constant>			:= COPY <trace>; 
 
